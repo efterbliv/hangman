@@ -95,10 +95,10 @@ func checkGuess() {
 // getStatus determines if the game should continue or not.
 func getStatus() {
 	if strings.Compare(strings.Join(word[:], ","), strings.Join(correctGuesses[:], ",")) == 0 && guesses < 10 {
-		fmt.Printf("You won! The word was: %v\n", wholeWord)
+		fmt.Printf("🥳 You won! The word was: %v\n", wholeWord)
 		os.Exit(0)
 	} else if guesses > 10 {
-		fmt.Printf("Sorry, you lost, the word was: %v\n", wholeWord)
+		fmt.Printf("😭 Sorry, you lost, the word was: %v\n", wholeWord)
 		os.Exit(0)
 	} else {
 		getGuess()
