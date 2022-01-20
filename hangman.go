@@ -58,8 +58,17 @@ func getGuess() {
 	reader := bufio.NewReader(os.Stdin)
 
 	printMan()
-	fmt.Printf("✅ Correct guesses: %v\n", correctGuesses)
-	fmt.Printf("❌ Wrong guesses (%v/11): %v\n", guesses, wrongGuesses)
+	fmt.Printf("✅ Correct guesses: ")
+	for i := range correctGuesses {
+		fmt.Printf("%v ", correctGuesses[i])
+	}
+	fmt.Println()
+
+	fmt.Printf("❌ Wrong guesses (%v/11): ", guesses)
+	for i := range wrongGuesses {
+		fmt.Printf("%v ", wrongGuesses[i])
+	}
+	fmt.Println()
 
 	for correctInput == false {
 		fmt.Printf("📝 Enter a character: ")
