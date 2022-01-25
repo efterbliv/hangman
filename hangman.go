@@ -1,5 +1,3 @@
-// In this version of hangman I have tried to create a better structure for the game.
-// Arguments are instead turned in to global variables.
 package main
 
 import (
@@ -27,6 +25,18 @@ func main() {
 	getStatus()
 }
 
+// clearScreen clears the terminal window
+func clearScreen() {
+	var cmd *exec.Cmd
+	if runtime.GOOS != "windows" {
+		cmd = exec.Command("clear")
+	} else {
+		cmd = exec.Command("cmd", "/c", "cls")
+	}
+	cmd.Stdout = os.Stdout
+	_ = cmd.Run()
+}
+
 // generateWordVars initializes word vars
 func generateVars() {
 	tempSlice, err := diceware.Generate(1)
@@ -40,19 +50,7 @@ func generateVars() {
 	}
 }
 
-// clearScreen clears the terminal window
-func clearScreen() {
-	var cmd *exec.Cmd
-	if runtime.GOOS != "windows" {
-		cmd = exec.Command("clear")
-	} else {
-		cmd = exec.Command("cmd", "/c", "cls")
-	}
-	cmd.Stdout = os.Stdout
-	_ = cmd.Run()
-}
-
-// getGuess reads from stdin and checks the input for errors.
+// getGuess reads from stdin and prints current game status
 func getGuess() {
 	var correctInput bool = false
 	reader := bufio.NewReader(os.Stdin)
@@ -73,17 +71,24 @@ func getGuess() {
 	for correctInput == false {
 		fmt.Printf("📝 Enter a character: ")
 		guess, _ = reader.ReadString('\n')
-		guess = strings.ToLower(strings.TrimSpace(guess))
-		if len(guess) > 1 {
-			fmt.Printf("🤔 You can only choose one character!\n")
-		} else if len(guess) < 1 {
-			fmt.Printf("🤔 Did you really choose a character?\n")
-		} else {
-			correctInput = true
-		}
+		checkInput(&correctInput)
 	}
 	clearScreen()
 	checkGuess()
+}
+
+// checkInput takes a pointer to a state and determines if a guess is valid input
+func checkInput(state *bool) {
+	guess = strings.ToLower(strings.TrimSpace(guess))
+	if len(guess) > 1 {
+		fmt.Printf("🤔 You can only choose one character!\n")
+	} else if len(guess) < 1 {
+		fmt.Printf("🤔 Did you really choose a character?\n")
+	} else if strings.Contains(strings.Join(wrongGuesses[:], ","), guess) || strings.Contains(strings.Join(correctGuesses[:], ","), guess) {
+		fmt.Printf("🤔 You already guessed that character, try another one!\n")
+	} else {
+		*state = true
+	}
 }
 
 // checkGuess determines if a guess is correct or not and then calls getGuess()
